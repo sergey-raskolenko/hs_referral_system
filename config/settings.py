@@ -45,6 +45,14 @@ INSTALLED_APPS = [
     'user',
 ]
 
+# Custom user model
+AUTH_USER_MODEL = 'user.User'
+# Custom backend
+AUTHENTICATION_BACKENDS = [
+	'django.contrib.auth.backends.ModelBackend',
+	'user.backends.PasswordlessAuthBackend',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
