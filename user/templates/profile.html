@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container ">
+    <div class="row justify-content-md-center">
+        {% if request.user.is_authenticated %}
+        <div class="card">
+            <div class="card-header">
+                <h5>Профиль пользователя</h5>
+            </div>
+            {% if user.phone == profile.phone %}
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Пользователь:</th>
+                        <td>{{profile}}</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="col">Менеджерство:</th>
+                        <td>{{profile.is_staff}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="col">Телефон:</th>
+                        <td>{{profile.phone}}</td>
+                    </tr>
+                    {% if profile.invited_by %}
+                    <tr>
+                        <th scope="col">Кем приглашен:</th>
+                        <td>{{profile.invited_by}}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <th scope="col">Кем приглашен:</th>
+                        <td>
+                            <form method="POST" action=" {% url 'enter_invite_code' profile.invite_code %} "
+                                  style="text-align:center;">
+                                {% csrf_token %}
+                                <input type="text" name="code">
+                                <button type="submit" class="btn btn-success">
+                                    Ввести код
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th scope="col">Кого пригласил:</th>
+                        <td>
+                            {% if profile.user_set.count > 0 %}
+                            {% for item in profile.user_set.all %}
+                            <li> {{item.invite_code}}</li>
+                            {% endfor %}
+                            {% else %}
+                            Нет данных
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer"></div>
+            {% else %}
+            <div class="card-body">
+                <b> Это не ваш профиль! </b>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="card-body">
+            <p><b>Уже есть аккаунт? </b><a href="{% url 'login' %}">Войти</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
