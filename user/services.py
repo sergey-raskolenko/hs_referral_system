@@ -1,5 +1,4 @@
 import random
-from time import sleep
 from user.models import User
 
 
@@ -15,7 +14,6 @@ class OTP:
 		user = User.objects.get(phone=phone)
 		user.otp = otp
 		user.save()
-		sleep(2)
 		print(f"OTP:{otp}")
 
 	@staticmethod

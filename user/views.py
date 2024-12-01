@@ -1,3 +1,5 @@
+from time import sleep
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 
@@ -22,13 +24,13 @@ def login_page(request):
 
 		try:
 			user = User.objects.get(phone=phone)
-			OTP.send_otp(phone)
-			return redirect(f"/otp/{user.id}/{temp}")
 		except User.DoesNotExist:
 			user = User.objects.create_user(phone=phone)
 			user.set_invite_code()
 			user.save()
+		finally:
 			OTP.send_otp(phone)
+			sleep(2)
 			return redirect(f"/otp/{user.id}/{temp}")
 
 	return render(request, template_name="login.html", context=context)
@@ -86,7 +88,7 @@ def enter_invite_code(request, invite_code):
 		if profile.invited_by:
 			messages.error(request, "Вы не можете ввести новый код!")
 
-		elif code == invite_code:
+		elif profile.invite_code == code:
 			messages.error(request, "Вы не можете ввести свой же код!")
 
 		elif invited_by in profile.user_set.all():
