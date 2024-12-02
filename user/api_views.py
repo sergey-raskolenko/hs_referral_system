@@ -37,14 +37,12 @@ class LoginAPIView(CreateAPIView):
                 user.refresh_from_db()
                 sleep(2)
                 content = {
-                    'phone': str(user.phone),
-                    'otp': user.otp,
-                    'link_for_auth': f"/api/{user.id}/{temp}/"
+                    "phone": str(user.phone),
+                    "otp": user.otp,
+                    "link_for_auth": f"/api/{user.id}/{temp}/",
                 }
                 return Response(content, status=status.HTTP_200_OK)
-        content = {
-            'error': form.errors
-        }
+        content = {"error": form.errors}
         return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -54,10 +52,10 @@ class LogoutAPIView(ListAPIView):
     def get(self, request, *args, **kwargs):
         logout(request)
         content = {
-            'is_auth_user': request.user.is_authenticated,
-            'user': str(request.user),
-            'auth': str(request.auth),
-            'login_url': '/api/login/'
+            "is_auth_user": request.user.is_authenticated,
+            "user": str(request.user),
+            "auth": str(request.auth),
+            "login_url": "/api/login/",
         }
         return Response(content, status=status.HTTP_200_OK)
 
@@ -74,19 +72,17 @@ class OTPAPIView(CreateAPIView):
             user = authenticate(request, phone=phone)
 
             if user is not None:
-                login(request, user, backend='user.backends.PasswordlessAuthBackend')
+                login(request, user, backend="user.backends.PasswordlessAuthBackend")
                 content = {
-                    'is_auth_user': request.user.is_authenticated,
-                    'user': str(request.user),
-                    'user_profile_url': f'/api/profile/',
-                    'last_login': request.user.last_login
+                    "is_auth_user": request.user.is_authenticated,
+                    "user": str(request.user),
+                    "user_profile_url": f"/api/profile/",
+                    "last_login": request.user.last_login,
                 }
                 return Response(content, status=status.HTTP_200_OK)
 
         else:
-            content = {
-                'error': "Не верный OTP-код!"
-            }
+            content = {"error": "Не верный OTP-код!"}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -96,7 +92,7 @@ class ProfileAPIView(ListCreateAPIView):
     """
 
     def get(self, request, *args, **kwargs):
-        user_id = request.session.get('_auth_user_id')
+        user_id = request.session.get("_auth_user_id")
 
         if user_id:
             profile = User.objects.get(id=user_id)
@@ -105,13 +101,13 @@ class ProfileAPIView(ListCreateAPIView):
 
         else:
             content = {
-                'error': "Вы не авторизованы!",
+                "error": "Вы не авторизованы!",
             }
             return Response(content, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
         code = request.data.get("invite_code")
-        user_id = request.session.get('_auth_user_id')
+        user_id = request.session.get("_auth_user_id")
 
         if user_id:
             try:
@@ -120,19 +116,19 @@ class ProfileAPIView(ListCreateAPIView):
 
                 if profile.invited_by:
                     content = {
-                        'error': "Вы не можете ввести новый код!",
+                        "error": "Вы не можете ввести новый код!",
                     }
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
                 elif profile.invite_code == code:
                     content = {
-                        'error': "Вы не можете ввести свой же код!",
+                        "error": "Вы не можете ввести свой же код!",
                     }
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
                 elif invited_by in profile.user_set.all():
                     content = {
-                        'error': "Вы не можете ввести код того, кого вы пригласили!",
+                        "error": "Вы не можете ввести код того, кого вы пригласили!",
                     }
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
@@ -144,12 +140,12 @@ class ProfileAPIView(ListCreateAPIView):
 
             except User.DoesNotExist:
                 content = {
-                    'error': "Код не существует!",
+                    "error": "Код не существует!",
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             content = {
-                'error': "Вы не авторизованы!",
+                "error": "Вы не авторизованы!",
             }
             return Response(content, status=status.HTTP_404_NOT_FOUND)

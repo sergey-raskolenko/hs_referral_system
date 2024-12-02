@@ -3,18 +3,19 @@ from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-	"""Сериализатор для объекта модели User"""
-	invited_followers = serializers.SerializerMethodField()
-	phone = serializers.SerializerMethodField()
+    """Сериализатор для объекта модели User"""
 
-	@staticmethod
-	def get_phone(instance):
-		return str(instance.phone)
+    invited_followers = serializers.SerializerMethodField()
+    phone = serializers.SerializerMethodField()
 
-	@staticmethod
-	def get_invited_followers(instance):
-		return [str(user) for user in instance.user_set.all()]
+    @staticmethod
+    def get_phone(instance):
+        return str(instance.phone)
 
-	class Meta:
-		model = User
-		fields = ["id", "phone", "invite_code", "invited_by", "invited_followers"]
+    @staticmethod
+    def get_invited_followers(instance):
+        return [str(user) for user in instance.user_set.all()]
+
+    class Meta:
+        model = User
+        fields = ["id", "phone", "invite_code", "invited_by", "invited_followers"]
